@@ -106,10 +106,9 @@ services:
   postgres:
     image: postgres:15
     environment:
-      - POSTGRES_DB=authdb
+      - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_MULTIPLE_DATABASES=authdb,bloody_donation,MicroserverBanque
     ports:
       - "5432:5432"
     volumes:
