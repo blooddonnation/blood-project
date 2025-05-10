@@ -1,0 +1,14 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: donation-history-service
+  data:
+    mongodb:
+      uri: mongodb://mongodb:27017/blooddonation_db
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka:8761/eureka/
+jwt:
+  secret: ${JWT_SECRET}
