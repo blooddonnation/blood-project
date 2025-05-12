@@ -1,6 +1,7 @@
 package com.example.auth_service.service;
 
 import com.example.auth_service.entities.User;
+import com.example.auth_service.events.UserEvent;
 import com.example.auth_service.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,6 +10,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -17,6 +21,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EventProducerService eventProducerService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -48,6 +55,38 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Transactional
     public User registerUser(User user) {
         validateUser(user);
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        
+        // Publish user creation event
+        UserEvent event = new UserEvent();
+        event.setEventType("CREATE");
+        event.setUserId(savedUser.getId());
+        event.setUsername(savedUser.getUsername());
+        event.setEmail(savedUser.getEmail());
+        event.setBloodType(savedUser.getBloodType());
+        event.setRole(savedUser.getRole());
+        event.setDateOfBirth(savedUser.getDateOfBirth().atStartOfDay());
+        eventProducerService.publishUserEvent(event);
+        
+        return savedUser;
+    }
+
+    @Transactional
+    public User updateUser(User user) {
+        validateUser(user);
+        User updatedUser = userRepository.save(user);
+        
+        // Publish user update event
+        UserEvent event = new UserEvent();
+        event.setEventType("UPDATE");
+        event.setUserId(updatedUser.getId());
+        event.setUsername(updatedUser.getUsername());
+        event.setEmail(updatedUser.getEmail());
+        event.setBloodType(updatedUser.getBloodType());
+        event.setRole(updatedUser.getRole());
+        event.setDateOfBirth(updatedUser.getDateOfBirth().atStartOfDay());
+        eventProducerService.publishUserEvent(event);
+        
+        return updatedUser;
     }
 }
