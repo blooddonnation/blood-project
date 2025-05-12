@@ -23,8 +23,8 @@ public class BloodDonationRequestController {
 
     // Create a new request
     @PostMapping
-    public ResponseEntity<BloodDonationRequestResponseDTO> createRequest(@RequestBody BloodDonationRequest request, @RequestParam Long bloodCenterId) {
-        BloodDonationRequest created = requestService.createRequest(request, bloodCenterId);
+    public ResponseEntity<BloodDonationRequestResponseDTO> createRequest(@RequestBody BloodDonationRequest request) {
+        BloodDonationRequest created = requestService.createRequest(request);
 
         BloodDonationRequestResponseDTO dto = new BloodDonationRequestResponseDTO(
             created.getId(),
@@ -78,7 +78,7 @@ public class BloodDonationRequestController {
             @RequestBody BloodDonationRequest updatedRequest,
             @RequestParam(required = false) Long bloodCenterId) {
 
-        BloodDonationRequest updated = requestService.updateRequest(id, updatedRequest, bloodCenterId);
+        BloodDonationRequest updated = requestService.updateRequest(id, updatedRequest);
         if (updated == null) {
             return ResponseEntity.notFound().build();
         }
