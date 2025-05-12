@@ -27,10 +27,16 @@ public class BloodDonationRequestService {
     private BloodCenterRepository bloodCenterRepository;
 
     // Create new blood donation request
-    public BloodDonationRequest createRequest(BloodDonationRequest request, Long bloodCenterId) {
-        // Hardcoded example of assigning requester. You can replace with authentication context
-        Optional<User> requesterOpt = userRepository.findById(request.getRequestedBy().getId());
-        Optional<BloodCenter> centerOpt = bloodCenterRepository.findById(bloodCenterId);
+    public BloodDonationRequest createRequest(BloodDonationRequest request) {
+        Long requesterId = request.getRequestedBy() != null ? request.getRequestedBy().getId() : null;
+        Long centerId = request.getBloodCenter() != null ? request.getBloodCenter().getId() : null;
+
+        if (requesterId == null || centerId == null) {
+            throw new IllegalArgumentException("Requester ID and Blood Center ID must be provided.");
+        }
+
+        Optional<User> requesterOpt = userRepository.findById(requesterId);
+        Optional<BloodCenter> centerOpt = bloodCenterRepository.findById(centerId);
 
         if (requesterOpt.isPresent() && centerOpt.isPresent()) {
             request.setRequestedBy(requesterOpt.get());
@@ -40,7 +46,7 @@ public class BloodDonationRequestService {
             return requestRepository.save(request);
         }
 
-        throw new IllegalArgumentException("Invalid requester or blood center ID");
+        throw new IllegalArgumentException("Invalid requester or blood center ID.");
     }
 
     // Get all requests
@@ -54,26 +60,26 @@ public class BloodDonationRequestService {
     }
 
     // Update a request
-    public BloodDonationRequest updateRequest(Long id, BloodDonationRequest updatedRequest, Long bloodCenterId) {
-        Optional<BloodDonationRequest> existingOpt = requestRepository.findById(id);
-        if (!existingOpt.isPresent()) {
-            return null;
-        }
-
-        BloodDonationRequest existing = existingOpt.get();
-
-        existing.setBloodType(updatedRequest.getBloodType());
-        existing.setStatus(updatedRequest.getStatus());
-        existing.setQuantity(updatedRequest.getQuantity());
-        existing.setUpdatedAt(LocalDateTime.now());
-
-        if (bloodCenterId != null) {
-            Optional<BloodCenter> newCenterOpt = bloodCenterRepository.findById(bloodCenterId);
-            newCenterOpt.ifPresent(existing::setBloodCenter);
-        }
-
-        return requestRepository.save(existing);
+public BloodDonationRequest updateRequest(Long id, BloodDonationRequest updatedRequest) {
+    Optional<BloodDonationRequest> existingOpt = requestRepository.findById(id);
+    if (!existingOpt.isPresent()) {
+        return null;
     }
+
+    BloodDonationRequest existing = existingOpt.get();
+
+    existing.setBloodType(updatedRequest.getBloodType());
+    existing.setStatus(updatedRequest.getStatus());
+    existing.setQuantity(updatedRequest.getQuantity());
+    existing.setUpdatedAt(LocalDateTime.now());
+
+    if (updatedRequest.getBloodCenter() != null && updatedRequest.getBloodCenter().getId() != null) {
+        Optional<BloodCenter> newCenterOpt = bloodCenterRepository.findById(updatedRequest.getBloodCenter().getId());
+        newCenterOpt.ifPresent(existing::setBloodCenter);
+    }
+
+    return requestRepository.save(existing);
+}
 
     // Delete a request
     public boolean deleteRequest(Long id) {
