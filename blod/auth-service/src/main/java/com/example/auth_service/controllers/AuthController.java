@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth") // Changed to match proxy rewrite
 public class AuthController {
 
     @Autowired
@@ -54,7 +54,7 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(registerRequest.password()));
         user.setEmail(registerRequest.email());
         user.setBloodType(registerRequest.bloodType());
-        user.setDateOfBirth(registerRequest.dateOfBirth()); 
+        user.setDateOfBirth(registerRequest.dateOfBirth());
         user.setRole(registerRequest.role().toUpperCase());
 
         try {
@@ -86,7 +86,7 @@ public class AuthController {
         SecurityContextHolder.clearContext();
         return ResponseEntity.ok("Logged out successfully");
     }
-//testi token
+
     @GetMapping("/test")
     public ResponseEntity<?> testProtectedEndpoint() {
         return ResponseEntity.ok("This is a protected endpoint");
@@ -98,6 +98,11 @@ public class AuthController {
         User user = (User) userService.loadUserByUsername(normalizedUsername);
         boolean matches = passwordEncoder.matches(loginRequest.password(), user.getPassword());
         return ResponseEntity.ok("Password matches: " + matches);
+    }
+
+    @GetMapping("/test-cors")
+    public ResponseEntity<String> testCors() {
+        return ResponseEntity.ok("CORS is working!");
     }
 }
 
