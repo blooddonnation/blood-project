@@ -12,65 +12,58 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/centers")
-@CrossOrigin(origins = "*") // Allows access from any frontend
 public class CenterController {
 
     @Autowired
     private CenterRepository centerRepository;
 
-    // Retrieve all centers
     @GetMapping
     public ResponseEntity<List<CenterEntity>> getAllCenters() {
         List<CenterEntity> centers = centerRepository.findAll();
         return new ResponseEntity<>(centers, HttpStatus.OK);
     }
 
-    // Create a new center
     @PostMapping
     public ResponseEntity<CenterEntity> createCenter(@RequestBody CenterEntity center) {
         if (center == null) {
-            return ResponseEntity.badRequest().build();  // Return 400 Bad Request if input is invalid
+            return ResponseEntity.badRequest().build();
         }
         CenterEntity createdCenter = centerRepository.save(center);
         return new ResponseEntity<>(createdCenter, HttpStatus.CREATED);
     }
 
-    // Retrieve a center by ID
     @GetMapping("/{id}")
     public ResponseEntity<CenterEntity> getCenterById(@PathVariable Long id) {
         Optional<CenterEntity> center = centerRepository.findById(id);
         if (center.isPresent()) {
             return new ResponseEntity<>(center.get(), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Return 404 if not found
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    // Update a center
     @PutMapping("/{id}")
     public ResponseEntity<CenterEntity> updateCenter(@PathVariable Long id, @RequestBody CenterEntity centerDetails) {
         Optional<CenterEntity> optionalCenter = centerRepository.findById(id);
         if (optionalCenter.isPresent()) {
             CenterEntity center = optionalCenter.get();
-            // Updating center fields with new values
             center.setIdAdmin(centerDetails.getIdAdmin());
             center.setLatitude(centerDetails.getLatitude());
             center.setLongitude(centerDetails.getLongitude());
             centerRepository.save(center);
             return new ResponseEntity<>(center, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Return 404 if not found
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    // Delete a center
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCenter(@PathVariable Long id) {
         if (centerRepository.existsById(id)) {
             centerRepository.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // Return 204 No Content
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Return 404 if not found
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }

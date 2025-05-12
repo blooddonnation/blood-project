@@ -8,24 +8,20 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.cors.CorsConfigurationSource;
 
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
 @Configuration
 public class corsConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);  
-        config.setAllowedOrigins(List.of("http://localhost:8082", "http://localhost:3000"));  
-        config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));  
-        config.setAllowedHeaders(List.of("*"));  
-        // If you need wildcard subdomain support, use:
-        // config.setAllowedOriginPatterns(List.of("http://*.localhost:3000"));
+        config.setAllowCredentials(false); // Set to false since no authentication is involved
+        config.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:3000")); // Add 5173, keep 3000
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setMaxAge(3600L); // Cache preflight requests for 1 hour
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
-        return (CorsConfigurationSource) source;
+        return source;
     }
 }
