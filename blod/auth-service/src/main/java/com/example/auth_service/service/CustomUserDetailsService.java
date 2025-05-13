@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.List; // Added import
 import java.util.Optional;
 
 @Service
@@ -85,5 +86,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         eventProducerService.publishUserEvent(event);
         
         return updatedUser;
+    }
+
+    // New method to fetch all usernames
+    public List<String> getAllUsernames() {
+        return userRepository.findAllUsernames();
     }
 }

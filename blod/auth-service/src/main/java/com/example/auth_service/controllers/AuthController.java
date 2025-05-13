@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List; // Added import
 
 @RestController
 @RequestMapping({"/auth", "/api/auth"}) // Support both paths
@@ -103,6 +104,13 @@ public class AuthController {
     @GetMapping("/test-cors")
     public ResponseEntity<String> testCors() {
         return ResponseEntity.ok("CORS is working!");
+    }
+
+    // New endpoint to fetch all usernames
+    @GetMapping("/users/usernames")
+    public ResponseEntity<List<String>> getAllUsernames() {
+        List<String> usernames = userService.getAllUsernames();
+        return ResponseEntity.ok(usernames);
     }
 }
 
