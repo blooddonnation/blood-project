@@ -37,8 +37,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers("/auth/register", "/auth/login").permitAll()
-                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/auth/**", "/api/auth/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -49,32 +48,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Collections.singletonList("http://localhost:[*]"));
+        configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        configuration.setAllowedHeaders(Arrays.asList(
-            "Authorization",
-            "Content-Type",
-            "Accept",
-            "Origin",
-            "X-Requested-With",
-            "Access-Control-Request-Method",
-            "Access-Control-Request-Headers",
-            "Cache-Control",
-            "Pragma",
-            "If-Match",
-            "If-None-Match",
-            "If-Modified-Since",
-            "If-Unmodified-Since"
-        ));
-        configuration.setExposedHeaders(Arrays.asList(
-            "Authorization",
-            "Content-Type",
-            "Access-Control-Allow-Origin",
-            "Access-Control-Allow-Credentials",
-            "Access-Control-Allow-Methods",
-            "Access-Control-Allow-Headers",
-            "Access-Control-Max-Age"
-        ));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setExposedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
         

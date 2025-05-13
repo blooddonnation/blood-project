@@ -1,9 +1,7 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import com.fasterxml.jackson.annotation.JsonIgnore; // Import Jackson annotation
 
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "events")
