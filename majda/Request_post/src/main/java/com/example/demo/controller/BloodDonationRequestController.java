@@ -1,10 +1,9 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.BloodDonationRequestCreateDTO;
 import com.example.demo.dto.BloodDonationRequestResponseDTO;
 import com.example.demo.model.BloodDonationRequest;
-
 import com.example.demo.service.BloodDonationRequestService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,23 +18,31 @@ public class BloodDonationRequestController {
     @Autowired
     private BloodDonationRequestService requestService;
 
-
-
     // Create a new request
     @PostMapping
-    public ResponseEntity<BloodDonationRequestResponseDTO> createRequest(@RequestBody BloodDonationRequest request) {
-        BloodDonationRequest created = requestService.createRequest(request);
+    public ResponseEntity<?> createRequest(@RequestBody BloodDonationRequestCreateDTO requestDTO) {
+        try {
+            BloodDonationRequest request = new BloodDonationRequest();
+            request.setBloodType(requestDTO.getBloodType());
+            request.setQuantity(requestDTO.getQuantity());
 
-        BloodDonationRequestResponseDTO dto = new BloodDonationRequestResponseDTO(
-            created.getId(),
-            created.getBloodType(),
-            created.getStatus(),
-            created.getQuantity(),
-            created.getRequestedBy().getId(),
-            created.getBloodCenter().getId()
-        );
+            BloodDonationRequest created = requestService.createRequest(request, requestDTO.getRequestedById(), requestDTO.getBloodCenterId());
 
-        return ResponseEntity.ok(dto);
+            BloodDonationRequestResponseDTO dto = new BloodDonationRequestResponseDTO(
+                created.getId(),
+                created.getBloodType(),
+                created.getStatus(),
+                created.getQuantity(),
+                created.getRequestedBy().getId(),
+                created.getBloodCenter().getId()
+            );
+
+            return ResponseEntity.ok(dto);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("An error occurred while processing your request");
+        }
     }
 
     // Get all requests
