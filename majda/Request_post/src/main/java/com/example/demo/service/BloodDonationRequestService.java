@@ -35,20 +35,27 @@ public class BloodDonationRequestService {
             throw new IllegalArgumentException("Requester ID and Blood Center ID must be provided.");
         }
 
-        Optional<User> requesterOpt = userRepository.findById(requesterId);
-        Optional<BloodCenter> centerOpt = bloodCenterRepository.findById(centerId);
+        try {
+            Optional<User> requesterOpt = userRepository.findById(requesterId);
+            Optional<BloodCenter> centerOpt = bloodCenterRepository.findById(centerId);
 
-        if (requesterOpt.isPresent() && centerOpt.isPresent()) {
-            request.setRequestedBy(requesterOpt.get());
-            request.setBloodCenter(centerOpt.get());
-            request.setCreatedAt(LocalDateTime.now());
-            request.setUpdatedAt(LocalDateTime.now());
-            return requestRepository.save(request);
+            if (requesterOpt.isPresent() && centerOpt.isPresent()) {
+                request.setRequestedBy(requesterOpt.get());
+                request.setBloodCenter(centerOpt.get());
+                request.setCreatedAt(LocalDateTime.now());
+                request.setUpdatedAt(LocalDateTime.now());
+                return requestRepository.save(request);
+            } else {
+                throw new IllegalArgumentException("Invalid requester or blood center ID.");
+            }
+        } catch (IllegalArgumentException e) {
+            throw e; // Re-throw the specific IllegalArgumentException
+        } catch (Exception e) {
+            // Log the unexpected error
+          
+            throw new RuntimeException("Failed to create blood donation request.", e); // Wrap and re-throw
         }
-
-        throw new IllegalArgumentException("Invalid requester or blood center ID.");
     }
-
     // Get all requests
     public List<BloodDonationRequest> getAllRequests() {
         return requestRepository.findAll();

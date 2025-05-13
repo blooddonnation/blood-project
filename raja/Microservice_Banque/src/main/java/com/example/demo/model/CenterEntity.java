@@ -16,6 +16,8 @@ public class CenterEntity {
     private Long idAdmin;
     private String latitude;
     private String longitude;
+    private String name;
+    private String location;
 
     // Bidirectional mapping (optional)
     @OneToMany(mappedBy = "center", cascade = CascadeType.ALL)
@@ -53,6 +55,22 @@ public class CenterEntity {
 
     public void setLongitude(String longitude) {
         this.longitude = longitude;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public List<EventEntity> getEvents() {

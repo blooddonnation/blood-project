@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("/auth") // Changed to match proxy rewrite
+@RequestMapping({"/auth", "/api/auth"}) // Support both paths
 public class AuthController {
 
     @Autowired
