@@ -1,5 +1,6 @@
 package com.example.auth_service.security;
 
+import com.example.auth_service.entities.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -67,6 +68,7 @@ public class JwtUtils {
 
         String token = Jwts.builder()
                 .subject(userPrincipal.getUsername())
+                .claim("id", ((User) userPrincipal).getId())
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(key)

@@ -71,4 +71,9 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    // Getter for the ID
+    public Long getId() {
+        return id;
+    }
 }
