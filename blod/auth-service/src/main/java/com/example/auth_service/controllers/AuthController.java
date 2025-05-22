@@ -106,14 +106,41 @@ public class AuthController {
         return ResponseEntity.ok("CORS is working!");
     }
 
-    // New endpoint to fetch all usernames
+    // hdchi new 3la kbk user management
     @GetMapping("/users/usernames")
     public ResponseEntity<List<String>> getAllUsernames() {
         List<String> usernames = userService.getAllUsernames();
         return ResponseEntity.ok(usernames);
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
+    }
+
+    @PutMapping("/users/{id}/role")
+    public ResponseEntity<?> updateUserRole(@PathVariable Long id, @RequestBody UpdateRoleRequest request) {
+        try {
+            User updatedUser = userService.updateUserRole(id, request.role());
+            return ResponseEntity.ok(updatedUser);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        try {
+            userService.deleteUser(id);
+            return ResponseEntity.ok("User deleted successfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
 
 record RegisterRequest(String username, String password, String email, String bloodType, LocalDate dateOfBirth, String role) {}
 record LoginRequest(String username, String password) {}
 record JwtResponse(String token) {}
+record UpdateRoleRequest(String role) {}

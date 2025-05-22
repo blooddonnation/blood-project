@@ -92,4 +92,54 @@ public class CustomUserDetailsService implements UserDetailsService {
     public List<String> getAllUsernames() {
         return userRepository.findAllUsernames();
     }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    @Transactional
+    public User updateUserRole(Long userId, String newRole) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
+
+        String[] validRoles = {"ADMIN", "USER", "CENTERMANAGER"};
+        if (!Arrays.asList(validRoles).contains(newRole.toUpperCase())) {
+            throw new IllegalArgumentException("Invalid role: " + newRole);
+        }
+
+        user.setRole(newRole.toUpperCase());
+        User updatedUser = userRepository.save(user);
+        
+        // Publish user update event
+        UserEvent event = new UserEvent();
+        event.setEventType("UPDATE");
+        event.setUserId(updatedUser.getId());
+        event.setUsername(updatedUser.getUsername());
+        event.setEmail(updatedUser.getEmail());
+        event.setBloodType(updatedUser.getBloodType());
+        event.setRole(updatedUser.getRole());
+        event.setDateOfBirth(updatedUser.getDateOfBirth().atStartOfDay());
+        eventProducerService.publishUserEvent(event);
+        
+        return updatedUser;
+    }
+
+    @Transactional
+    public void deleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
+        
+        // Publish user deletion event
+        UserEvent event = new UserEvent();
+        event.setEventType("DELETE");
+        event.setUserId(user.getId());
+        event.setUsername(user.getUsername());
+        event.setEmail(user.getEmail());
+        event.setBloodType(user.getBloodType());
+        event.setRole(user.getRole());
+        event.setDateOfBirth(user.getDateOfBirth().atStartOfDay());
+        eventProducerService.publishUserEvent(event);
+        
+        userRepository.delete(user);
+    }
 }
