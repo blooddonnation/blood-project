@@ -37,10 +37,19 @@ public class GpsPositionService {
         }
     }
 
-    @Scheduled(cron = "0 0 3 * * ?", zone = "UTC")
+    @Scheduled(cron = "0 0 * * * ?", zone = "UTC")
     public void deletePositionsOlderThanOneDay() {
-        LocalDateTime oneDayAgo = LocalDateTime.now().minus(1, ChronoUnit.DAYS);
-        gpsPositionRepository.deleteByTimestampLessThan(oneDayAgo);
-        System.out.println("Deleted positions older than one day at: " + LocalDateTime.now());
+        try {
+            LocalDateTime oneDayAgo = LocalDateTime.now().minus(1, ChronoUnit.DAYS);
+            long countBefore = gpsPositionRepository.count();
+            gpsPositionRepository.deleteByTimestampLessThan(oneDayAgo);
+            long countAfter = gpsPositionRepository.count();
+            long deletedCount = countBefore - countAfter;
+            System.out.println("Cleanup job executed at: " + LocalDateTime.now());
+            System.out.println("Deleted " + deletedCount + " positions older than " + oneDayAgo);
+        } catch (Exception e) {
+            System.err.println("Error during cleanup job: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
