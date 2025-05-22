@@ -63,12 +63,14 @@ public class JwtUtils {
 
     public String generateToken(Authentication authentication) {
         UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
+        User user = (User) userPrincipal;
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
 
         String token = Jwts.builder()
                 .subject(userPrincipal.getUsername())
-                .claim("id", ((User) userPrincipal).getId())
+                .claim("id", user.getId())
+                .claim("role", user.getRole())
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(key)
