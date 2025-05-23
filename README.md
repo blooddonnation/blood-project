@@ -15,8 +15,11 @@ How to Run
 Build and Run the Dockerfile (for Maven Build)
 First, build all Maven projects using the provided Dockerfile:
 
+# Build the Docker image
 docker build -t maven-builder .
-docker run --rm maven-builder
+
+# Run the Docker container
+docker run maven-builder
 
 This will compile and package all Java services so their JAR files are ready for the next step.
 
