@@ -15,7 +15,7 @@ public class corsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(false); // Set to false since no authentication is involved
-        config.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:3000")); // Add 5173, keep 3000
+        config.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:3000" , "http://localhost:[*]" ,"http://37.59.98.204:5173")); // Add 5173, keep 3000
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setMaxAge(3600L); // Cache preflight requests for 1 hour

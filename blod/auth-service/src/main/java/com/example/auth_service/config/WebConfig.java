@@ -18,13 +18,14 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOriginPatterns("http://localhost:[*]")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
+        registry.addMapping("/api/**")
+                .allowedOrigins(
+                    "http://localhost:[*]",  // Local development
+                    "http://37.59.98.204:5173"  // Production URL
+                )
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .exposedHeaders("Authorization", "Content-Type", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials")
-                .allowCredentials(true)
-                .maxAge(3600);
+                .allowCredentials(true);
     }
 
     @Bean
