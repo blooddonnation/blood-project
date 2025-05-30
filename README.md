@@ -12,18 +12,24 @@ Redis: In-memory data store for caching and token management.
 
 
 How to Run
+
 Build and Run the Dockerfile (for Maven Build)
 First, build all Maven projects using the provided Dockerfile:
 
+# Build the Docker image
+```bash
 docker build -t maven-builder .
-docker run --rm maven-builder
-
+```
+# Run the Docker container
+```bash
+docker run maven-builder
+```
 This will compile and package all Java services so their JAR files are ready for the next step.
 
 Next, use Docker Compose to build and start all services and dependencies:
-
+```bash
 docker-compose up --build
-
+```
 This will:
 - Build Docker images for each microservice
 - Start all services (including databases and Eureka)
